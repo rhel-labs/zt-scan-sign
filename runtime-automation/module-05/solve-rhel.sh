@@ -4,8 +4,7 @@ echo "Solving module-05: Sign and Verify" >> /tmp/progress.log
 # Load REGISTRY from bashrc
 . /home/rhel/.bashrc 2>/dev/null || true
 
-# Look up the image digest from local podman storage
-IMAGE_DIGEST=$(runuser -l rhel -c "podman inspect --format='{{.Digest}}' ${REGISTRY}/rhhi-demo:v1" 2>/dev/null)
+IMAGE_DIGEST=$(cat /home/rhel/image.digest 2>/dev/null)
 
 # Sign the image using the digest and local key
 export COSIGN_PASSWORD=""

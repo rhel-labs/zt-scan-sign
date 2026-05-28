@@ -42,7 +42,7 @@ podman tag rhhi-demo:v1 registry-{guid}.{domain}/rhhi-demo:v1
 
 [source,bash,role=execute,subs=attributes+]
 ----
-podman push registry-{guid}.{domain}/rhhi-demo:v1
+podman push --digestfile ~/image.digest registry-{guid}.{domain}/rhhi-demo:v1
 ----
 
 [[capture-digest]]
@@ -50,15 +50,11 @@ podman push registry-{guid}.{domain}/rhhi-demo:v1
 
 Cosign 2.0 requires digest-based references for signing. Tags like `:v1` are mutable -- anyone could overwrite them -- so signing a tag would be insecure. The digest is a content-addressed SHA256 hash that is immutable.
 
-Capture the digest into a shell variable for use in the signing commands.
-
-[source,bash,role=execute,subs=attributes+]
-----
-IMAGE_DIGEST=$(podman inspect --format='{{.Digest}}' registry-{guid}.{domain}/rhhi-demo:v1)
-----
+The `--digestfile` flag wrote the registry-assigned digest to `~/image.digest` when you pushed. Load it into a shell variable now.
 
 [source,bash,role=execute]
 ----
+IMAGE_DIGEST=$(cat ~/image.digest)
 echo "Image digest: ${IMAGE_DIGEST}"
 ----
 

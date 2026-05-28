@@ -15,5 +15,11 @@ if ! runuser -u rhel -- podman image exists ${REGISTRY}/rhhi-demo:v1 2>/dev/null
     exit 1
 fi
 
-echo "PASS: cosign key pair exists and image pushed to registry" >> /tmp/progress.log
+if [ ! -f /home/rhel/image.digest ]; then
+    echo "FAIL: image.digest file not found" >> /tmp/progress.log
+    echo "HINT: Push with 'podman push --digestfile ~/image.digest ${REGISTRY}/rhhi-demo:v1' to capture the digest" >> /tmp/progress.log
+    exit 1
+fi
+
+echo "PASS: cosign key pair exists, image pushed to registry, digest captured" >> /tmp/progress.log
 exit 0
