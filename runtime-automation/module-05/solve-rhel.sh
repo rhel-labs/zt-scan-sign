@@ -6,15 +6,8 @@ echo "Solving module-05: Sign and Verify" >> /tmp/progress.log
 
 IMAGE_DIGEST=$(cat /home/rhel/image.digest 2>/dev/null)
 
-# Sign the image using the digest and local key
-export COSIGN_PASSWORD=""
-/usr/local/bin/cosign sign --tlog-upload=false \
-  --yes --key /home/rhel/cosign.key \
-  ${REGISTRY}/rhhi-demo@${IMAGE_DIGEST}
+runuser -l rhel -c "COSIGN_PASSWORD='' /usr/local/bin/cosign sign --tlog-upload=false --yes --key /home/rhel/cosign.key ${REGISTRY}/rhhi-demo@${IMAGE_DIGEST}" >> /tmp/progress.log 2>&1
 
-# Verify the signature with the public key
-/usr/local/bin/cosign verify --insecure-ignore-tlog=true \
-  --key /home/rhel/cosign.pub \
-  ${REGISTRY}/rhhi-demo@${IMAGE_DIGEST}
+runuser -l rhel -c "/usr/local/bin/cosign verify --insecure-ignore-tlog=true --key /home/rhel/cosign.pub ${REGISTRY}/rhhi-demo@${IMAGE_DIGEST}" >> /tmp/progress.log 2>&1
 
-echo "module-03 solve complete" >> /tmp/progress.log
+echo "module-05 solve complete" >> /tmp/progress.log

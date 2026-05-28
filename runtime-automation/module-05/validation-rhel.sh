@@ -10,10 +10,7 @@ if [ -z "$IMAGE_DIGEST" ]; then
     exit 1
 fi
 
-export COSIGN_PASSWORD=""
-if /usr/local/bin/cosign verify --insecure-ignore-tlog=true \
-  --key /home/rhel/cosign.pub \
-  ${REGISTRY}/rhhi-demo@${IMAGE_DIGEST} > /dev/null 2>&1; then
+if runuser -l rhel -c "/usr/local/bin/cosign verify --insecure-ignore-tlog=true --key /home/rhel/cosign.pub ${REGISTRY}/rhhi-demo@${IMAGE_DIGEST}" >> /tmp/progress.log 2>&1; then
     echo "PASS: Image signature verified" >> /tmp/progress.log
     exit 0
 else
