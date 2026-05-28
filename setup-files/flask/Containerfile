@@ -1,5 +1,6 @@
 FROM registry.access.redhat.com/hi/python:3.12-builder AS deps
-RUN pip install flask --prefix=/install
+USER root
+RUN mkdir -p /install && pip install flask --prefix=/install
 
 FROM registry.access.redhat.com/hi/python:3.12
 COPY --from=deps /install /usr/local
