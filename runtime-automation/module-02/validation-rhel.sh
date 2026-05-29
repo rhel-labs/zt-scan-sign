@@ -1,16 +1,16 @@
 #!/bin/sh
 echo "Validating module-02" >> /tmp/progress.log
 
-SBOM_FILE="/home/rhel/scanning/rhhi-demo.spdx"
+SBOM_FILE="/home/rhel/rhhi-demo.spdx"
 
 if [ ! -f "$SBOM_FILE" ]; then
-    echo "FAIL: SBOM file not found at ~/scanning/rhhi-demo.spdx" >> /tmp/progress.log
+    echo "FAIL: SBOM file not found at ~/rhhi-demo.spdx" >> /tmp/progress.log
     echo "HINT: Did you complete Step 2 to generate the SBOM with syft?" >> /tmp/progress.log
     exit 1
 fi
 
 if ! jq empty "$SBOM_FILE" > /dev/null 2>&1; then
-    echo "FAIL: ~/scanning/rhhi-demo.spdx exists but is not valid JSON" >> /tmp/progress.log
+    echo "FAIL: ~/rhhi-demo.spdx exists but is not valid JSON" >> /tmp/progress.log
     echo "HINT: The SBOM file exists but isn't valid JSON - try regenerating it with syft" >> /tmp/progress.log
     exit 1
 fi
@@ -28,5 +28,5 @@ if [ "$PKG_COUNT" -le 20 ]; then
     exit 1
 fi
 
-echo "PASS: SBOM found at ~/scanning/rhhi-demo.spdx with $PKG_COUNT packages" >> /tmp/progress.log
+echo "PASS: SBOM found at ~/rhhi-demo.spdx with $PKG_COUNT packages" >> /tmp/progress.log
 exit 0

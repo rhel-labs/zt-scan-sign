@@ -9,7 +9,7 @@ fi
 
 if [ ! -f /home/rhel/ubi-latest.sig ]; then
     echo "FAIL: ubi-latest.sig not found" >> /tmp/progress.log
-    echo "HINT: Verify the ubi9/ubi:latest signature with cosign using the local RHEL signing key" >> /tmp/progress.log
+    echo "HINT: Verify the ubi10/ubi:latest signature with cosign using the local RHEL signing key" >> /tmp/progress.log
     exit 1
 fi
 

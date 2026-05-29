@@ -15,12 +15,12 @@
 [[introduction]]
 == Introduction
 
-Building secure images is only the first step. In this module, you'll learn how to analyze the security posture of your container images using industry-standard tools.
+Building applications using Red Hat Hardened Images is only the first step. In this lab, you'll learn how to analyze the security posture of your container images using industry-standard tools.
 
-Two images are already pre-built and waiting for you:
+Two application images are pre-built and waiting for you:
 
 * `rhhi-demo:v1` — a Flask web app built using Red Hat Hardened Images as the runtime base (`hi/python:3.12`), with a multi-stage build that installs only what the application needs at runtime
-* `rhhi-demo:ubi` — the same Flask app built from the standard UBI Python image (`ubi9/python-312`), a single-stage build with a broader set of base packages
+* `rhhi-demo:ubi` — the same Flask app built from the minimal UBI10 base image (`ubi10/ubi`) with Python 3.12 and pip installed via dnf, a common real-world pattern for containerizing Python applications
 
 Both images run the same application code and the same version of Python 3.12. The only difference is the base image. You'll use `grype` to scan both for known CVEs and see firsthand how the choice of base image affects your security posture.
 
@@ -42,19 +42,42 @@ This enables the socket for the current user session only. It does not require `
 [[verify-tools]]
 == Step 2: Verify the Scanning Tools
 
-Both `grype` and `syft` are already installed. Let's confirm they're ready:
+Red Hat works with several scanning partners to ensure that the published CVE feeds are available and usable to you. For the purposes of this lab, the upstream versions of both `grype` and `syft` are already installed. Let's confirm they're ready:
 
 [source,bash,role=execute]
 ----
 grype version
 ----
+.*Expected output (varies, but typically):*
+....
+Application:         grype
+Version:             0.111.0
+BuildDate:           2026-04-09T13:14:56Z
+GitCommit:           1f19355a7ee2d7e2bd58da6255bdeb618eb0c0d1
+GitDescription:      v0.111.0
+Platform:            linux/amd64
+GoVersion:           go1.25.9
+Compiler:            gc
+Syft Version:        v1.42.4
+Supported DB Schema: 6
+....
 
 [source,bash,role=execute]
 ----
 syft version
 ----
-
-You should see version output for both tools. Now let's check the images:
+.*Expected output (varies, but typically):*
+....
+Application:   syft
+Version:       1.42.4
+BuildDate:     2026-04-08T20:39:07Z
+GitCommit:     f6189175279981a79d8d8c15669c570f15a00568
+GitDescription: v1.42.4
+Platform:      linux/amd64
+GoVersion:     go1.26.2
+Compiler:      gc
+SchemaVersion: 16.1.3
+....
 
 [source,bash,role=execute]
 ----
@@ -63,11 +86,11 @@ podman images rhhi-demo
 
 ----
 REPOSITORY           TAG         IMAGE ID      CREATED        SIZE
-localhost/rhhi-demo  ubi         8f3a1c2d4e5f  2 minutes ago  271 MB
+localhost/rhhi-demo  ubi         8f3a1c2d4e5f  2 minutes ago  ~350 MB
 localhost/rhhi-demo  v1          9b2e4f6a7c8d  2 hours ago    108 MB
 ----
 
-Notice the size difference: the hardened multi-stage image is smaller because the builder stage dependencies are not included in the final image.
+Notice the hardened `v1` image is significantly smaller than the UBI-based image. This size reduction stems from the *distroless* nature of the hardened python image. Fewer packages in the image means smaller images and less potential attack surface.
 
 [[scan-hardened]]
 == Step 3: Scan the Hardened Image
@@ -84,14 +107,15 @@ grype rhhi-demo:v1 --by-cve
 The scan may take 1-2 minutes to complete. The `--by-cve` flag normalizes output to CVE identifiers instead of other data sources like GHSA, making it easier to cross-reference with other tools and databases.
 ====
 
-.*Expected output:*
+.*Expected output (varies, but typically):*
 ----
  ✔ Loaded image                                           rhhi-demo:v1
  ✔ Parsed image sha256:9b2e4f6a...
  ✔ Cataloged contents  a3c7d9e1...
-   ├── ✔ Packages                        [82 packages]
-   ├── ✔ File metadata                   [531 locations]
-   ├── ✔ Executables                     [74 executables]
+   ├── ✔ Packages                        [68 packages]  
+   ├── ✔ File digests                    [3,064 files]  
+   ├── ✔ Executables                     [184 executables]  
+   └── ✔ File metadata                   [3,064 locations]
  ✔ Scanned for vulnerabilities     [0 vulnerability matches]
    ├── by severity: 0 critical, 0 high, 0 medium, 0 low, 0 negligible
    └── by status:   0 fixed, 0 not-fixed, 0 ignored
@@ -118,12 +142,13 @@ grype rhhi-demo:ubi --by-cve --only-fixed
  ✔ Loaded image                                           rhhi-demo:ubi
  ✔ Parsed image  sha256:8f3a1c2d...
  ✔ Cataloged contents   c4b8e2f5...
-   ├── ✔ Packages                        [213 packages]
-   ├── ✔ Executables                     [185 executables]
-   ├── ✔ File metadata                   [1,842 locations]
- ✔ Scanned for vulnerabilities     [8 vulnerability matches]
-   ├── by severity: 0 critical, 2 high, 4 medium, 2 low, 0 negligible
-   └── by status:   8 fixed, 12 not-fixed, 0 ignored
+   ├── ✔ Packages                        [~150 packages]
+   ├── ✔ Executables                     [~200 executables]
+   ├── ✔ File metadata                   [~3,000 locations]
+   └── ✔ File digests                    [~3,000 files]
+ ✔ Scanned for vulnerabilities     [vulnerabilities found]
+   ├── by severity: N critical, N high, N medium, N low, 0 negligible
+   └── by status:   N fixed, N not-fixed, 0 ignored
 <output truncated>
 ----
 
@@ -132,15 +157,14 @@ grype rhhi-demo:ubi --by-cve --only-fixed
 The `--only-fixed` flag shows only vulnerabilities that have available patches. This focuses attention on immediately actionable issues rather than `wontfix` items. Remove the flag to see the full vulnerability list including unfixed issues.
 ====
 
-[IMPORTANT]
-====
 **Key Insight:**
 
 * **Hardened image** (`rhhi-demo:v1`): 0 CVEs at ship time
-* **UBI image** (`rhhi-demo:ubi`): CVEs from general-purpose packages included in the standard UBI Python image
+* **UBI image** (`rhhi-demo:ubi`): CVEs from general-purpose packages included in even a minimal UBI10 base — `dnf`, `bash`, system libraries, and their dependencies
 
-Both images run the same Flask app on the same Python 3.12. The CVE difference comes entirely from the base image — the hardened runtime includes only what a Python application needs at runtime, while UBI includes a broader set of packages to support general-purpose workloads. Every extra package is a potential CVE surface.
-====
+Both images run the same Flask app on the same Python 3.12.13. The CVE difference comes entirely from the base image — the hardened runtime includes only what a Python application needs at runtime, while even a minimal UBI base carries package management infrastructure and general-purpose system tools. Every extra package is a potential CVE surface.
+
+Both images include the Python dependecies for Flask (`pip install flask`), so any CVEs in the application would be common.
 
 [[summary]]
 == Summary

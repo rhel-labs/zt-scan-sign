@@ -11,7 +11,7 @@ echo "Solving module-03: Verify Published Signatures" >> /tmp/progress.log
 /usr/local/bin/cosign verify --insecure-ignore-tlog \
   --output-file /home/rhel/ubi-latest.sig \
   --key /etc/pki/sigstore/SIGSTORE-redhat-release3 \
-  registry.access.redhat.com/ubi9/ubi:latest
+  registry.access.redhat.com/ubi10/ubi:latest
 
 cat /home/rhel/hi-python.sig | jq '.[0].optional'
 

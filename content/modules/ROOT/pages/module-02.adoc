@@ -15,7 +15,7 @@
 [[introduction]]
 == Introduction
 
-Vulnerability scanning tells you about known CVEs today, but software supply chain compliance also requires you to document *what* is in your images — now and in the future. A Software Bill of Materials (SBOM) is that inventory.
+Vulnerability scanning tells you about known CVEs today, but software supply chain compliance also requires you to understand *what* is in your images — now and in the future. A Software Bill of Materials (SBOM) is that inventory.
 
 SBOMs are essential for:
 
@@ -60,16 +60,11 @@ Notice that Syft identifies multiple package types in a single scan:
 
 A table is useful for human review, but compliance workflows need machine-readable output. There are several standard SBOM formats; we'll use Software Package Data Exchange (SPDX), an ISO/IEC standard (ISO/IEC 5962:2021).
 
-Change to the scanning directory and generate the SBOM:
+Generate the SBOM for our Flask application:
 
 [source,bash,role=execute]
 ----
-cd ~/scanning
-----
-
-[source,bash,role=execute]
-----
-syft rhhi-demo:v1 -o spdx-json=rhhi-demo.spdx
+syft rhhi-demo:v1 -o spdx-json=~/rhhi-demo.spdx
 ----
 
 .*Expected output:*
@@ -86,11 +81,11 @@ syft rhhi-demo:v1 -o spdx-json=rhhi-demo.spdx
 [[inspect-sbom]]
 == Step 3: Inspect the SBOM
 
-The SBOM is a JSON file. Use `jq` to query it:
+The SBOM is a JSON file. Use `jq` to query it for the number of packages installed:
 
 [source,bash,role=execute]
 ----
-jq '.packages | length' rhhi-demo.spdx
+jq '.packages | length' ~/rhhi-demo.spdx
 ----
 
 .*Expected output:*
@@ -107,7 +102,7 @@ You can also explore individual package entries:
 
 [source,bash,role=execute]
 ----
-jq '.packages[0]' rhhi-demo.spdx
+jq '.packages[0]' ~/rhhi-demo.spdx
 ----
 
 Each package entry includes name, version, license, checksums, and supplier information — everything needed for compliance reporting.
@@ -127,23 +122,15 @@ Each package entry includes name, version, license, checksums, and supplier info
 For compliance requirements, use `spdx-json` or `cyclonedx-json`. Both formats are accepted by tools like FOSSA, Dependency-Track, and grype.
 ====
 
-[[cleanup]]
-== Step 4: Reset Working Directory
-
-[source,bash,role=execute]
-----
-cd ~
-----
-
 [[summary]]
 == Summary
 
-In this module, you generated a machine-readable SBOM for `rhhi-demo:v1`. You'll attach this SBOM as a signed attestation in Module 6.
+In this module, you generated a machine-readable SBOM for `rhhi-demo:v1`. You'll see what can be done with this SBOM in a later module.
 
 .*What You've Accomplished*
 
 * Generated a human-readable package table with Syft
-* Created a machine-readable SPDX-JSON SBOM at `~/scanning/rhhi-demo.spdx`
+* Created a machine-readable SPDX-JSON SBOM at `~/rhhi-demo.spdx`
 * Queried the SBOM with `jq` to count and inspect package entries
 
 Proceed to Module 3 to verify Red Hat's published image signatures using cosign.

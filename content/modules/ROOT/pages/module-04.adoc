@@ -33,7 +33,7 @@ You can check the current value at any time with `echo $REGISTRY`.
 [[push-image]]
 == Tag and Push the Image
 
-The `rhhi-demo:v1` image was built during lab setup and lives in local Podman storage. To sign it, cosign needs the image to be in an OCI registry. Tag it for your local registry and push it.
+The `rhhi-demo:v1` image was built during lab setup and lives in local Podman storage. To sign it, cosign needs the image to be in an OCI registry. Tag it for your local registry and push it. The `--digestfile` flag writes the registry-assigned digest to `~/image.digest` for later use.
 
 [source,bash,role=execute,subs=attributes+]
 ----
@@ -50,8 +50,7 @@ podman push --digestfile ~/image.digest registry-{guid}.{domain}/rhhi-demo:v1
 
 Cosign 2.0 requires digest-based references for signing. Tags like `:v1` are mutable -- anyone could overwrite them -- so signing a tag would be insecure. The digest is a content-addressed SHA256 hash that is immutable.
 
-The `--digestfile` flag wrote the registry-assigned digest to `~/image.digest` when you pushed. Load it into a shell variable now.
-
+Let's set the captured digest as an environment variable to make our later commands a little more readable.
 [source,bash,role=execute]
 ----
 IMAGE_DIGEST=$(cat ~/image.digest)
@@ -66,7 +65,7 @@ Image digest: sha256:abc123...
 [[generate-keys]]
 == Generate a Cosign Key Pair
 
-Generate a key pair for signing. For this lab we use an empty passphrase via the environment variable so the commands don't prompt interactively.
+Cosign uses a key pair for signing and verification of a digital signature. The current recommedation is to use keyless signing, but that requires access to a certifcate authority like Fulcio to work. For this lab we use a local key pair with an empty passphrase via the environment variable so the commands don't prompt interactively.
 
 [TIP]
 ====

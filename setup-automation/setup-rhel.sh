@@ -73,7 +73,7 @@ echo "export REGISTRY=${REGISTRY_HOST}" >> /home/rhel/.bashrc
 # Pull base images for the Flask demo app
 runuser -l rhel -c "podman pull registry.access.redhat.com/hi/python:3.12-builder"
 runuser -l rhel -c "podman pull registry.access.redhat.com/hi/python:3.12"
-runuser -l rhel -c "podman pull registry.access.redhat.com/ubi9/python-312"
+runuser -l rhel -c "podman pull registry.access.redhat.com/ubi10/ubi"
 echo "Base images pulled" >> /tmp/progress.log
 
 # Copy Flask app files from the lab repo
@@ -91,9 +91,6 @@ echo "rhhi-demo:v1 built" >> /tmp/progress.log
 # Build rhhi-demo:ubi (single-stage UBI Python 3.12 for CVE comparison)
 runuser -l rhel -c "podman build --net=host -t rhhi-demo:ubi -f /home/rhel/flask/Containerfile.ubi /home/rhel/flask"
 echo "rhhi-demo:ubi built" >> /tmp/progress.log
-
-# Create scanning directory for SBOM output
-runuser -l rhel -c "mkdir -p /home/rhel/scanning"
 
 # Cleanup
 rm -rf $TMPDIR

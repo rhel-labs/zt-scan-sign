@@ -15,7 +15,7 @@
 [[introduction]]
 == Introduction
 
-How do you prove that a container image you downloaded is authentic and hasn't been tampered with? The answer is cryptographic signing. In this module, you'll use `cosign` to verify the signatures that Red Hat publishes on its hardened images — including `hi/python:3.12`, the base your lab image is built on.
+You've started with a minimized base, inventoried the contents of your application. To ensure your supply chain, how do you prove that a container image you downloaded is authentic and hasn't been tampered with? The answer is cryptographic signing. In this module, you'll use `cosign` to verify the signatures that Red Hat publishes on its hardened images — including `hi/python:3.12`, the base your lab image is built on.
 
 === About Cosign and the Transparency Log
 
@@ -49,7 +49,7 @@ Let's verify `hi/python:3.12`, the exact base image your `rhhi-demo:v1` applicat
 [source,bash,role=execute,subs=attributes+]
 ----
 cosign verify --insecure-ignore-tlog \
-  --output-file hi-python.sig \
+  --output-file ~/hi-python.sig \
   --key https://security.access.redhat.com/data/63405576.txt \
   {rhhi-registry}/python:3.12
 ----
@@ -62,19 +62,19 @@ The following checks were performed on each of these signatures:
   - The signatures were verified against the specified public key
 ----
 
-This confirms that `hi/python:3.12` is exactly the hardened image Red Hat published. The verification output is saved to `hi-python.sig` for later reference.
+This confirms that `hi/python:3.12` is exactly the hardened image Red Hat published. The verification output is saved to `~/hi-python.sig` for later reference.
 
 [[verify-ubi]]
 == Verify the UBI Image Signature
 
-Red Hat distributes the same signing key through two channels: the URL you used above, and a key file that ships with RHEL itself. For UBI images, the local key lets you verify without reaching out to an external URL.
+Red Hat distributes the same signing key through two channels: the URL you used above, and a key file that ships with RHEL itself. The local key lets you verify without reaching out to an external URL. Let's verify the UBI image on disk using the local copy of the key.
 
 [source,bash,role=execute,subs=attributes+]
 ----
 cosign verify --insecure-ignore-tlog \
-  --output-file ubi-latest.sig \
+  --output-file ~/ubi-latest.sig \
   --key /etc/pki/sigstore/SIGSTORE-redhat-release3 \
-  registry.access.redhat.com/ubi9/ubi:latest
+  registry.access.redhat.com/ubi10/ubi:latest
 ----
 
 Both approaches use the same underlying key. The URL method works anywhere with HTTPS egress. The local key file works in air-gapped environments where RHEL is installed.
@@ -83,9 +83,9 @@ Feel free to examine the `.sig` files to see the JSON arrays that cosign produce
 
 [source,bash,role=execute]
 ----
-cat hi-python.sig | jq '.[0].optional'
+cat ~/hi-python.sig | jq '.[0].optional'
 ----
 
 == Summary
 
-You've verified that Red Hat's published images carry valid, cryptographically verifiable signatures. The same key that protects `hi/python:3.12` — your app's base — also protects every other Red Hat hardened image. In the next module, you'll push your own image to a local registry and set up keys to sign it.
+You've verified that Red Hat's published images carry valid, cryptographically verifiable signatures. The same key that protects `hi/python:3.12` — your app's base — also protects every other Red Hat hardened image. In the next module, you'll explore how to sign your own images.
