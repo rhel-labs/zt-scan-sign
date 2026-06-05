@@ -1,4 +1,4 @@
-= Vulnerability Scanning with Grype
+= Vulnerability Scanning Container Images
 
 .*Module Overview*
 [sidebar]

@@ -1,4 +1,4 @@
-= Sign and Verify
+= Image Signing and Verification
 
 .*Module Overview*
 [sidebar]

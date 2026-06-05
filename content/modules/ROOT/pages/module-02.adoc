@@ -1,4 +1,4 @@
-= SBOM Generation with Syft
+= Working with SBOMs
 
 .*Module Overview*
 [sidebar]
@@ -55,7 +55,7 @@ Notice that Syft identifies not just RPMs from the included rpmdb, but the appli
 * `python` packages — Flask and its runtime dependencies installed via pip
 * `rpm` packages — system libraries from the hardened base image
 
-This is another way to quickly examine a distroless image when standard tools like `rpm` aren't available.
+This is another way to quickly examine a distroless image when standard tricks like `rpm -qa` aren't available.
 
 [[spdx-sbom]]
 == Step 2: Generate a Machine-Readable SPDX SBOM

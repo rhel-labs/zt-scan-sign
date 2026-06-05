@@ -1,4 +1,4 @@
-= Push to Registry and Generate Keys
+= Image Signing Setup
 
 .*Module Overview*
 [sidebar]

@@ -24,13 +24,11 @@ In this module, you'll use `cosign` to verify the signatures that Red Hat publis
 
 `cosign` is the standard tool for signing and verifying OCI container images. It works by:
 
-1. Attaching a cryptographic signature as an OCI artifact in the same registry as the image
+1. Attaching a *cryptographic signature* as an OCI artifact in the same registry as the image
 2. Recording that signature in the Sigstore **Rekor transparency log**, a public, append-only ledger that anyone can audit
 
 [NOTE]
 ====
-*About `--insecure-ignore-tlog` in this lab*
-
 In the commands below you will see `--insecure-ignore-tlog`. This flag tells cosign to skip verification against the Rekor transparency log.
 
 In this lab we use local key pairs and skip the public Rekor log to avoid adding lab-generated noise to the public Sigstore instance. Production signing should *always* use the transparency log for auditability.
@@ -44,7 +42,7 @@ In this lab, you will see the warning for `cosign` operations:
 [[verify-python]]
 == Verify the Python Base Image Signature
 
-Red Hat signs all hardened images with **Red Hat release key 3** — the same key used for all Red Hat containers since October 2024. 
+Red Hat signs all hardened images with **Red Hat release key v3** — the same key used for all Red Hat containers since October 2024. 
 The public key is available at a stable URL published on the Red Hat security portal.
 
 Let's verify `hi/python:3.12`, the base image your `rhhi-demo:hardened` application is built on.

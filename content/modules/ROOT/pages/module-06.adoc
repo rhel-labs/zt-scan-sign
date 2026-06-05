@@ -1,4 +1,4 @@
-= SBOM Attestation
+= Image SBOM Attestation
 
 .*Module Overview*
 [sidebar]
