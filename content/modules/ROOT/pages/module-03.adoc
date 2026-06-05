@@ -3,8 +3,7 @@
 .*Module Overview*
 [sidebar]
 --
-*Duration:* 5-6 minutes +
-*Learning Objectives:*
+*Objectives:*
 
 * Understand how cosign verifies container image signatures
 * Verify a Red Hat Hardened Image signature using a public key URL
@@ -15,14 +14,18 @@
 [[introduction]]
 == Introduction
 
-You've started with a minimized base, inventoried the contents of your application. To ensure your supply chain, how do you prove that a container image you downloaded is authentic and hasn't been tampered with? The answer is cryptographic signing. In this module, you'll use `cosign` to verify the signatures that Red Hat publishes on its hardened images — including `hi/python:3.12`, the base your lab image is built on.
+You've started with a minimized base, inventoried the contents of your application. 
+To ensure your supply chain, how do you prove that a container image you downloaded is authentic and hasn't been tampered with? 
+The answer is cryptographic signing. 
+
+In this module, you'll use `cosign` to verify the signatures that Red Hat publishes on its hardened images — including `hi/python:3.12`, the base your lab image is built on.
 
 === About Cosign and the Transparency Log
 
 `cosign` is the standard tool for signing and verifying OCI container images. It works by:
 
 1. Attaching a cryptographic signature as an OCI artifact in the same registry as the image
-2. Optionally recording that signature in the Sigstore **Rekor transparency log**, a public, append-only ledger that anyone can audit
+2. Recording that signature in the Sigstore **Rekor transparency log**, a public, append-only ledger that anyone can audit
 
 [NOTE]
 ====
@@ -32,19 +35,20 @@ In the commands below you will see `--insecure-ignore-tlog`. This flag tells cos
 
 In this lab we use local key pairs and skip the public Rekor log to avoid adding lab-generated noise to the public Sigstore instance. Production signing should *always* use the transparency log for auditability.
 
-When you see the warning:
+In this lab, you will see the warning for `cosign` operations:
 
  WARNING: Skipping tlog verification is an insecure practice that lacks transparency and auditability verification for the signature.
 
-This is expected. In a production environment, remove this flag and let cosign use Rekor normally.
 ====
 
 [[verify-python]]
 == Verify the Python Base Image Signature
 
-Red Hat signs all hardened images with **Red Hat release key 3** — the same key used for all Red Hat containers since October 2024. The public key is available at a stable URL published on the Red Hat security portal.
+Red Hat signs all hardened images with **Red Hat release key 3** — the same key used for all Red Hat containers since October 2024. 
+The public key is available at a stable URL published on the Red Hat security portal.
 
-Let's verify `hi/python:3.12`, the exact base image your `rhhi-demo:v1` application is built on.
+Let's verify `hi/python:3.12`, the base image your `rhhi-demo:hardened` application is built on.
+The output is saved to `~/hi-python.sig` for later reference.
 
 [source,bash,role=execute,subs=attributes+]
 ----
@@ -62,12 +66,17 @@ The following checks were performed on each of these signatures:
   - The signatures were verified against the specified public key
 ----
 
-This confirms that `hi/python:3.12` is exactly the hardened image Red Hat published. The verification output is saved to `~/hi-python.sig` for later reference.
+This confirms that `hi/python:3.12` is exactly the hardened image Red Hat published.
+Verification checks the provided key against the signature attached to the image in the registry.
+Signatures can then be used to gate the introduction of a new image to a pipeline or a local registry for distribution, even before pulling an image.
 
 [[verify-ubi]]
 == Verify the UBI Image Signature
 
-Red Hat distributes the same signing key through two channels: the URL you used above, and a key file that ships with RHEL itself. The local key lets you verify without reaching out to an external URL. Let's verify the UBI image on disk using the local copy of the key.
+Red Hat distributes the same signing key through two channels: the URL you used above, and a key file that ships with RHEL. 
+The local key lets you verify without reaching out to an external URL. 
+The same signing process happens for all container images produced by Red Hat, not just the hardened image catalog.
+Let's verify the UBI image using the local copy of the key shipped via RPM.
 
 [source,bash,role=execute,subs=attributes+]
 ----
@@ -77,7 +86,9 @@ cosign verify --insecure-ignore-tlog \
   registry.access.redhat.com/ubi10/ubi:latest
 ----
 
-Both approaches use the same underlying key. The URL method works anywhere with HTTPS egress. The local key file works in air-gapped environments where RHEL is installed.
+Both approaches use the same underlying key. 
+The URL method works anywhere with HTTPS egress. 
+The local key file works in air-gapped environments where RHEL is installed.
 
 Feel free to examine the `.sig` files to see the JSON arrays that cosign produces.
 
@@ -88,4 +99,6 @@ cat ~/hi-python.sig | jq '.[0].optional'
 
 == Summary
 
-You've verified that Red Hat's published images carry valid, cryptographically verifiable signatures. The same key that protects `hi/python:3.12` — your app's base — also protects every other Red Hat hardened image. In the next module, you'll explore how to sign your own images.
+You've verified that Red Hat's published images carry valid, cryptographically verifiable signatures. 
+The same key that protects `hi/python:3.12` — your app's base — also protects every other Red Hat image. 
+In the next module, you'll explore how to sign your own images.

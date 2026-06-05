@@ -3,7 +3,6 @@
 .*Module Overview*
 [sidebar]
 --
-*Duration:* 6-8 minutes +
 *Learning Objectives:*
 
 * Understand what a Software Bill of Materials (SBOM) is and why it matters
@@ -26,11 +25,12 @@ SBOMs are essential for:
 [[human-readable]]
 == Step 1: View a Human-Readable Package Table
 
-Syft can generate a quick summary in table format. Let's see what's in `rhhi-demo:v1`:
+Syft can generate a quick summary in table format. 
+Let's see what's in `rhhi-demo:hardened`:
 
 [source,bash,role=execute]
 ----
-syft rhhi-demo:v1 -o table
+syft rhhi-demo:hardened -o table
 ----
 
 .*Expected output (excerpt):*
@@ -50,26 +50,29 @@ glibc               2.34-125   rpm
 openssl-libs        3.2.2-6    rpm
 ----
 
-Notice that Syft identifies multiple package types in a single scan:
+Notice that Syft identifies not just RPMs from the included rpmdb, but the application dependencies.
 
 * `python` packages — Flask and its runtime dependencies installed via pip
 * `rpm` packages — system libraries from the hardened base image
 
+This is another way to quickly examine a distroless image when standard tools like `rpm` aren't available.
+
 [[spdx-sbom]]
 == Step 2: Generate a Machine-Readable SPDX SBOM
 
-A table is useful for human review, but compliance workflows need machine-readable output. There are several standard SBOM formats; we'll use Software Package Data Exchange (SPDX), an ISO/IEC standard (ISO/IEC 5962:2021).
+A table is useful for human review, but compliance workflows need machine-readable output. 
+There are several standard SBOM formats; we'll use Software Package Data Exchange (SPDX), an ISO/IEC standard (ISO/IEC 5962:2021).
 
 Generate the SBOM for our Flask application:
 
 [source,bash,role=execute]
 ----
-syft rhhi-demo:v1 -o spdx-json=~/rhhi-demo.spdx
+syft rhhi-demo:hardened -o spdx-json=~/rhhi-demo.spdx
 ----
 
 .*Expected output:*
 ----
- ✔ Loaded image                                           rhhi-demo:v1
+ ✔ Loaded image                                           rhhi-demo:hardened
  ✔ Parsed image  sha256:9b2e4f6a...
  ✔ Cataloged contents   a3c7d9e1...
    ├── ✔ Packages                        [82 packages]
@@ -125,12 +128,14 @@ For compliance requirements, use `spdx-json` or `cyclonedx-json`. Both formats a
 [[summary]]
 == Summary
 
-In this module, you generated a machine-readable SBOM for `rhhi-demo:v1`. You'll see what can be done with this SBOM in a later module.
+In this module, you explored SBOMs for `rhhi-demo:hardened`.
+Having a comprehensive list of the components of images is not only needed for some compliance standards, it's also useful to reason about your applications and how they are delivered.
+You'll see what can be done with this SBOM in a later module.
 
 .*What You've Accomplished*
 
-* Generated a human-readable package table with Syft
-* Created a machine-readable SPDX-JSON SBOM at `~/rhhi-demo.spdx`
-* Queried the SBOM with `jq` to count and inspect package entries
+* Generated a human-readable package listing
+* Created a machine-readable SPDX-JSON SBOM 
+* Queried the SBOM with `jq` 
 
-Proceed to Module 3 to verify Red Hat's published image signatures using cosign.
+In the next module, we'll talk about another securtiy focused feature of imges, signatures.

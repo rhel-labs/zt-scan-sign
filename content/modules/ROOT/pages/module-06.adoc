@@ -3,8 +3,7 @@
 .*Module Overview*
 [sidebar]
 --
-*Duration:* 5-6 minutes +
-*Learning Objectives:*
+*Objectives:*
 
 * Attach a signed SBOM as an OCI attestation
 * Verify the SBOM attestation
@@ -21,7 +20,9 @@ An attestation is additional metadata about an image -- such as an SBOM, scan re
 2. Stored alongside the image in the registry as an OCI artifact
 3. Verifiable by consumers before they run the image
 
-By attaching the SBOM as a signed attestation, anyone can prove that the SBOM came from the same trusted source as the image. Attestations can be any metadata about the image, cryptographically verifiable via cosign. SLSA provenance for build environment information is another type of attestation.
+By attaching the SBOM as a signed attestation, anyone can prove that the SBOM came from the same trusted source as the image. 
+Attestations can be any metadata about the image, cryptographically verifiable via cosign. 
+SLSA provenance for build environment information is another type of attestation.
 
 [[attach-sbom]]
 == Attach the SBOM as a Signed Attestation
@@ -31,7 +32,8 @@ By attaching the SBOM as a signed attestation, anyone can prove that the SBOM ca
 In Module 2, you generated the SBOM at `~/rhhi-demo.spdx` using `syft`. Attaching it here as a signed attestation ties it cryptographically to the specific image digest you pushed in Module 4.
 ====
 
-Attach the SBOM using `cosign attest`. The `--predicate` flag points to the SBOM file, and `--type spdxjson` tells cosign the predicate format.
+Attach the SBOM using `cosign attest`. 
+The `--predicate` flag points to the SBOM file, and `--type spdxjson` tells cosign the format.
 
 [source,bash,role=execute,subs=attributes+]
 ----

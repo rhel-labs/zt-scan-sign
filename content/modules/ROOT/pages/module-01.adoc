@@ -3,8 +3,7 @@
 .*Module Overview*
 [sidebar]
 --
-*Duration:* 8-10 minutes +
-*Learning Objectives:*
+*Objectives:*
 
 * Enable the rootless Podman socket for API-based tools
 * Scan a hardened container image for CVEs using Grype
@@ -15,19 +14,24 @@
 [[introduction]]
 == Introduction
 
-Building applications using Red Hat Hardened Images is only the first step. In this lab, you'll learn how to analyze the security posture of your container images using industry-standard tools.
+Building applications using Red Hat Hardened Images is only the first step. 
+In this lab, you'll learn how to analyze the security posture of your container images using industry-standard tools.
 
 Two application images are pre-built and waiting for you:
 
-* `rhhi-demo:v1` — a Flask web app built using Red Hat Hardened Images as the runtime base (`hi/python:3.12`), with a multi-stage build that installs only what the application needs at runtime
-* `rhhi-demo:ubi` — the same Flask app built from the minimal UBI10 base image (`ubi10/ubi`) with Python 3.12 and pip installed via dnf, a common real-world pattern for containerizing Python applications
+* `rhhi-demo:hardened` — a Flask web app built using Red Hat Hardened Images as the runtime base (`hi/python:3.12`), using the included `pip` to nstall the application dependecies. 
+* `rhhi-demo:ubi` — the same Flask app built from the standard UBI10 base image (`ubi10/ubi`) with Python 3.12 and pip installed via dnf, a common real-world pattern for containerizing Python applications
 
-Both images run the same application code and the same version of Python 3.12. The only difference is the base image. You'll use `grype` to scan both for known CVEs and see firsthand how the choice of base image affects your security posture.
+Both images run the same application code and the same version of Python 3.12. 
+The only difference is the base image. 
+You'll use `grype` to scan both for known CVEs and see firsthand how the choice of base image affects your security posture.
+You'll also create and explore the Software Bill of Materials (SBOM) for a container image in a later section.
 
 [[podman-socket]]
 == Step 1: Enable the Podman Socket
 
-Grype and Syft use the Podman API socket to find and inspect images. As a rootless user, you can enable this socket just for your session — you don't need system-level access.
+Grype and Syft use the Podman API socket to find and inspect images. 
+As a rootless user, you can enable this socket just for your session — you don't need system-level access.
 
 [source,bash,role=execute]
 ----
@@ -42,7 +46,9 @@ This enables the socket for the current user session only. It does not require `
 [[verify-tools]]
 == Step 2: Verify the Scanning Tools
 
-Red Hat works with several scanning partners to ensure that the published CVE feeds are available and usable to you. For the purposes of this lab, the upstream versions of both `grype` and `syft` are already installed. Let's confirm they're ready:
+Red Hat works with several scanning partners to ensure that the published CVE feeds are available and usable to you. 
+For the purposes of this lab, the upstream versions of both `grype` and `syft` are already installed. 
+Let's confirm they're ready:
 
 [source,bash,role=execute]
 ----
@@ -87,19 +93,21 @@ podman images rhhi-demo
 ----
 REPOSITORY           TAG         IMAGE ID      CREATED        SIZE
 localhost/rhhi-demo  ubi         8f3a1c2d4e5f  2 minutes ago  ~350 MB
-localhost/rhhi-demo  v1          9b2e4f6a7c8d  2 hours ago    108 MB
+localhost/rhhi-demo  hardened    9b2e4f6a7c8d  2 hours ago    108 MB
 ----
 
-Notice the hardened `v1` image is significantly smaller than the UBI-based image. This size reduction stems from the *distroless* nature of the hardened python image. Fewer packages in the image means smaller images and less potential attack surface.
+Notice the hardened image is significantly smaller than the UBI-based image. 
+This size reduction stems from the *distroless* nature of the hardened python image. 
+Fewer packages in the image means smaller images and less potential attack surface.
 
 [[scan-hardened]]
 == Step 3: Scan the Hardened Image
 
-Use Grype to scan `rhhi-demo:v1` for known CVEs:
+Use Grype to scan `rhhi-demo:hardened` for known CVEs:
 
 [source,bash,role=execute]
 ----
-grype rhhi-demo:v1 --by-cve
+grype rhhi-demo:hardened --by-cve
 ----
 
 [NOTE]
@@ -109,7 +117,7 @@ The scan may take 1-2 minutes to complete. The `--by-cve` flag normalizes output
 
 .*Expected output (varies, but typically):*
 ----
- ✔ Loaded image                                           rhhi-demo:v1
+ ✔ Loaded image                                           rhhi-demo:hardened
  ✔ Parsed image sha256:9b2e4f6a...
  ✔ Cataloged contents  a3c7d9e1...
    ├── ✔ Packages                        [68 packages]  
@@ -152,6 +160,11 @@ grype rhhi-demo:ubi --by-cve --only-fixed
 <output truncated>
 ----
 
+[source,bash,role=execute]
+----
+grype rhhi-demo:ubi --by-cve --only-fixed
+----
+
 [NOTE]
 ====
 The `--only-fixed` flag shows only vulnerabilities that have available patches. This focuses attention on immediately actionable issues rather than `wontfix` items. Remove the flag to see the full vulnerability list including unfixed issues.
@@ -159,24 +172,29 @@ The `--only-fixed` flag shows only vulnerabilities that have available patches. 
 
 **Key Insight:**
 
-* **Hardened image** (`rhhi-demo:v1`): 0 CVEs at ship time
-* **UBI image** (`rhhi-demo:ubi`): CVEs from general-purpose packages included in even a minimal UBI10 base — `dnf`, `bash`, system libraries, and their dependencies
+* **Hardened image** (`rhhi-demo:hardened`): Minimized image tracking upstream to deliver new images as quickly as changes are available.
+* **UBI image** (`rhhi-demo:ubi`): General purpose base image tracking RHEL to deliver backported fixes for maximum flexibility and supportability.
 
-Both images run the same Flask app on the same Python 3.12.13. The CVE difference comes entirely from the base image — the hardened runtime includes only what a Python application needs at runtime, while even a minimal UBI base carries package management infrastructure and general-purpose system tools. Every extra package is a potential CVE surface.
+Both images run the same Flask app on the same Python. 
+The CVE difference comes entirely from the base image — the hardened runtime includes only what a Python application needs at runtime, while even a minimal UBI base carries package management infrastructure and general-purpose system tools. 
+Every extra package is a potential CVE surface.
+Within the UBI family, there are additional types beyond the standard image used here that also address this sort of package reduction.
 
 Both images include the Python dependecies for Flask (`pip install flask`), so any CVEs in the application would be common.
 
 [[summary]]
 == Summary
 
-In this module, you scanned two container images built from the same application code and observed how base image choice directly affects your security posture.
+The choice of starting point can greatly impact the amount of triage required by teams to secure an application.
+While this is not the only factor when considering base image choices, it's important to understand how the different life cycle choices influence the results.
+
 
 .*What You've Accomplished*
 
 * Enabled the rootless Podman socket for API-based tool access
 * Verified grype and syft installations
-* Scanned `rhhi-demo:v1` and confirmed zero CVEs
+* Scanned `rhhi-demo:hardened` and confirmed zero CVEs
 * Scanned `rhhi-demo:ubi` and observed CVE exposure from base packages
 * Understood why curated minimal base images reduce attack surface
 
-Proceed to Module 2 to generate machine-readable SBOMs for compliance requirements.
+Proceed to Module 2 to explore SBOMs, required for some compliance regimes.

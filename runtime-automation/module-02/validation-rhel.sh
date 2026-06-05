@@ -24,7 +24,7 @@ fi
 
 if [ "$PKG_COUNT" -le 20 ]; then
     echo "FAIL: SBOM contains only $PKG_COUNT packages (expected > 20)" >> /tmp/progress.log
-    echo "HINT: The SBOM has only $PKG_COUNT packages - did you run syft against rhhi-demo:v1?" >> /tmp/progress.log
+    echo "HINT: The SBOM has only $PKG_COUNT packages - did you run syft against rhhi-demo:hardened?" >> /tmp/progress.log
     exit 1
 fi
 

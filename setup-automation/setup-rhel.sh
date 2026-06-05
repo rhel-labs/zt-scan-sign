@@ -12,9 +12,9 @@ chmod 666 /tmp/progress.log
 TMPDIR=/tmp/lab-setup-$$
 git clone --single-branch --branch ${GIT_BRANCH:-main} --no-checkout \
   --depth=1 --filter=tree:0 ${GIT_REPO} $TMPDIR
-git -C $TMPDIR sparse-checkout set --no-cone /setup-files
+git -C $TMPDIR sparse-checkout set --no-cone /content/modules/ROOT/examples/flask
 git -C $TMPDIR checkout
-SETUP_FILES=$TMPDIR/setup-files
+SETUP_FILES=$TMPDIR/content/modules/ROOT/examples/flask
 
 # Install grype
 GRYPE_VERSION=v0.111.0
@@ -78,15 +78,15 @@ echo "Base images pulled" >> /tmp/progress.log
 
 # Copy Flask app files from the lab repo
 mkdir -p /home/rhel/flask
-cp $SETUP_FILES/flask/app.py /home/rhel/flask/app.py
-cp $SETUP_FILES/flask/Containerfile /home/rhel/flask/Containerfile
-cp $SETUP_FILES/flask/Containerfile.ubi /home/rhel/flask/Containerfile.ubi
+cp $SETUP_FILES/app.py /home/rhel/flask/app.py
+cp $SETUP_FILES/Containerfile /home/rhel/flask/Containerfile
+cp $SETUP_FILES/Containerfile.ubi /home/rhel/flask/Containerfile.ubi
 chown -R rhel:rhel /home/rhel/flask
 echo "Flask app files copied" >> /tmp/progress.log
 
-# Build rhhi-demo:v1 (hardened multi-stage Python 3.12)
-runuser -l rhel -c "podman build --net=host -t rhhi-demo:v1 -f /home/rhel/flask/Containerfile /home/rhel/flask"
-echo "rhhi-demo:v1 built" >> /tmp/progress.log
+# Build rhhi-demo:hardened (hardened multi-stage Python 3.12)
+runuser -l rhel -c "podman build --net=host -t rhhi-demo:hardened -f /home/rhel/flask/Containerfile /home/rhel/flask"
+echo "rhhi-demo:hardened built" >> /tmp/progress.log
 
 # Build rhhi-demo:ubi (single-stage UBI Python 3.12 for CVE comparison)
 runuser -l rhel -c "podman build --net=host -t rhhi-demo:ubi -f /home/rhel/flask/Containerfile.ubi /home/rhel/flask"
