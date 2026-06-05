@@ -75,10 +75,10 @@ syft rhhi-demo:hardened -o spdx-json=~/rhhi-demo.spdx
  ✔ Loaded image                                           rhhi-demo:hardened
  ✔ Parsed image  sha256:9b2e4f6a...
  ✔ Cataloged contents   a3c7d9e1...
-   ├── ✔ Packages                        [82 packages]
-   ├── ✔ Executables                     [74 executables]
-   ├── ✔ File digests                    [531 files]
-   └── ✔ File metadata                   [531 locations]
+   ├── ✔ Packages                        [68 packages]  
+   ├── ✔ Executables                     [184 executables]  
+   ├── ✔ File metadata                   [3,064 locations]  
+   └── ✔ File digests                    [3,064 files]  
 ----
 
 [[inspect-sbom]]
@@ -93,7 +93,7 @@ jq '.packages | length' ~/rhhi-demo.spdx
 
 .*Expected output:*
 ----
-83
+69
 ----
 
 [NOTE]
@@ -107,7 +107,36 @@ You can also explore individual package entries:
 ----
 jq '.packages[0]' ~/rhhi-demo.spdx
 ----
-
+[source,json]
+----
+{
+  "name": "alternatives",
+  "SPDXID": "SPDXRef-Package-rpm-alternatives-ea955329131d1bd7",
+  "versionInfo": "1.33-5.1.hum1",
+  "supplier": "NOASSERTION",
+  "downloadLocation": "NOASSERTION",
+  "filesAnalyzed": true,
+  "packageVerificationCode": {
+    "packageVerificationCodeValue": "3f0b3bbfbb9d5ef4eb7571572a46c9c3bde7fc6d"
+  },
+  "sourceInfo": "acquired package info from RPM DB: /usr/lib/sysimage/rpm/rpmdb.sqlite",
+  "licenseConcluded": "NOASSERTION",
+  "licenseDeclared": "GPL-2.0-only",
+  "copyrightText": "NOASSERTION",
+  "externalRefs": [
+    {
+      "referenceCategory": "SECURITY",
+      "referenceType": "cpe23Type",
+      "referenceLocator": "cpe:2.3:a:alternatives:alternatives:1.33-5.1.hum1:*:*:*:*:*:*:*"
+    },
+    {
+      "referenceCategory": "PACKAGE-MANAGER",
+      "referenceType": "purl",
+      "referenceLocator": "pkg:rpm/redhat/alternatives@1.33-5.1.hum1?arch=x86_64&distro=hummingbird-20251124&upstream=chkconfig-1.33-5.1.hum1.src.rpm"
+    }
+  ]
+}
+----
 Each package entry includes name, version, license, checksums, and supplier information — everything needed for compliance reporting.
 
 [[sbom-formats]]

@@ -13,6 +13,6 @@ echo "Solving module-03: Verify Published Signatures" >> /tmp/progress.log
   --key /etc/pki/sigstore/SIGSTORE-redhat-release3 \
   registry.access.redhat.com/ubi10/ubi:latest
 
-cat /home/rhel/hi-python.sig | jq '.[0].optional'
+jq -r '.[0].optional' /home/rhel/hi-python.sig
 
 echo "module-03 solve complete" >> /tmp/progress.log

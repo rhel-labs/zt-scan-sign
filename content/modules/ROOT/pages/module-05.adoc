@@ -69,6 +69,7 @@ The following checks were performed on each of these signatures:
 
 [{"critical":{"identity":{"docker-reference":"registry-{guid}.{domain}/rhhi-demo"},...
 ----
+Notice that the JSON output has the same format as the public signature examined at the end of the earlier exercise.
 
 [NOTE]
 ====

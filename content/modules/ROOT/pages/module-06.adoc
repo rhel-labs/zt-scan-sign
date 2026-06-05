@@ -74,7 +74,7 @@ Verification for registry-{guid}.{domain}/rhhi-demo@sha256:... --
 The following checks were performed on each of these signatures:
   - The cosign claims were validated
   - The signatures were verified against the specified public key
-83
+69
 ----
 
 The final number is the package count from the SBOM. This confirms:
@@ -94,16 +94,64 @@ cosign download attestation --output-file cosign.sbom \
   registry-{guid}.{domain}/rhhi-demo@${IMAGE_DIGEST}
 ----
 
-The downloaded file is standard JSON and can be processed with any JSON tool.
+The downloaded file can be decoded to standard JSON and can be processed with any JSON tool.
 
 [source,bash,role=execute]
 ----
 file cosign.sbom
 ----
+....
+cosign.sbom: JSON text data
+....
 
 [source,bash,role=execute]
 ----
 jq -r '.payload' cosign.sbom | base64 -d | jq '.predicate.packages | length'
+----
+....
+69
+....
+
+SBOMs are also published for Red Hat images, and can be downloaded and processed the same way.
+[source,bash,role=execute,subs=attributes+]
+----
+cosign download attestation --output-file redhat.sbom \
+  {rhhi-registry}/python:3.12
+----
+
+Notice the file type is slightly different than the signature we attached.
+[source,bash,role=execute]
+----
+file redhat.sbom
+----
+....
+redhat.sbom: New Line Delimited JSON text data
+....
+
+The DSSE envelope attestations provided by Red Hat include other types of provenance than just signatures.
+[source,bash,role=execute]
+----
+jq -r '.payload' redhat.sbom | base64 -d | jq '.predicate.relationships'
+----
+[source,json]
+----
+[
+  {
+    "relatedSpdxElement": "SPDXRef-image-index",
+    "relationshipType": "DESCRIBES",
+    "spdxElementId": "SPDXRef-DOCUMENT"
+  },
+  {
+    "relatedSpdxElement": "SPDXRef-image-index",
+    "relationshipType": "VARIANT_OF",
+    "spdxElementId": "SPDXRef-image-python-3-12--hummingbird--default-2f9a71f9de69ca4cc34c02dba14b391b25b7e81b477b4fa0994215ae796b1aad"
+  },
+  {
+    "relatedSpdxElement": "SPDXRef-image-index",
+    "relationshipType": "VARIANT_OF",
+    "spdxElementId": "SPDXRef-image-python-3-12--hummingbird--default-0d48912e648ae8e2f59e644fc9ef6cdbf8c946268270f5e32ff1773305f7c2b3"
+  }
+]
 ----
 
 == Summary
