@@ -2,7 +2,7 @@
 # Single Point of Truth for Lab Information
 
 lab:
-  name: "Security operations with Red Hat Hardened Images: CVE scanning and image signing"
+  name: "Security operations with Red Hat Hardened Images CVE scanning and image signing"
   shortname: "zt-scan-sign"
   maintainer: "Matt Micene (mmicene@redhat.com)" 
   
