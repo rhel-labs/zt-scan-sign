@@ -167,4 +167,4 @@ You'll see what can be done with this SBOM in a later module.
 * Created a machine-readable SPDX-JSON SBOM 
 * Queried the SBOM with `jq` 
 
-In the next module, we'll talk about another securtiy focused feature of imges, signatures.
+In the next module, we'll talk about another securtiy focused feature of images, signatures.
