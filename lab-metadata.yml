@@ -20,7 +20,7 @@ lab:
   # Git references for deployment
   # Use automated tag tied to a release for production, main for development
   git_ref:
-    production: "prod"
+    production: "v1.0.0"
     development: "main"
 
 # DYNAMIC EXTRACTION SOURCES:
