@@ -22,7 +22,7 @@ The registry requires no login -- it is intentionally open for this lab so you c
 ====
 The `REGISTRY` environment variable pointing to your local registry was set during lab setup and persists in your terminal session via `~/.bashrc`. If you open a new terminal tab, run:
 
-[source,bash]
+[source,text]
 ----
 source ~/.bashrc
 ----

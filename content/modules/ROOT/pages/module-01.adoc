@@ -151,23 +151,27 @@ grype rhhi-demo:ubi --by-cve
    ├── ✔ Executables                     [642 executables]  
    ├── ✔ File metadata                   [7,199 locations]  
    └── ✔ File digests                    [7,199 files]  
- ✔ Scanned for vulnerabilities     [vulnerabilities found]
-   ├── by severity: N critical, N high, N medium, N low, 0 negligible
-   └── by status:   N fixed, N not-fixed, 0 ignored
+✔ Scanned for vulnerabilities     [252 vulnerability matches]  
+   ├── by severity: 0 critical, 2 high, 134 medium, 116 low, 0 negligible
+   └── by status:   0 fixed, 252 not-fixed, 0 ignored 
 <output truncated>
 ----
 
 Since UBI follows RHEL, there will likely be some number of Low and Medium CVEs that haven't been addressed. 
+Depending on the scanners used, risk triage will vary and severity may not match that https://access.redhat.com/security/updates/classification[assigned by Red Hat.^]
+
+
 The `--only-fixed` flag shows only vulnerabilities that have available patches. 
-This focuses attention on immediately actionable issues rather than `wontfix` items. 
+This focuses attention on immediately actionable issues rather than those currently under investigation, deferred, or `wontfix` items. 
 
 [source,bash,role=execute]
 ----
 grype rhhi-demo:ubi --by-cve --only-fixed
+grype rhhi-demo:hardened --by-cve --only-fixed
 ----
 [TIP]
 ====
-This flag and others will filter the output for any scan, not just the UBI image. You can rerun the RHHI scan with this flag as well. The full options and outputs for `grype` are outside the scope of this lab.
+This flag and others will filter the output for any scan. The full options and outputs for `grype` are outside the scope of this lab.
 ====
 
 **Key Insight:**
