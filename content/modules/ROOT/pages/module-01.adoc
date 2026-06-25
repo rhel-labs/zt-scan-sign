@@ -44,7 +44,7 @@ This enables the socket for the current user session only. It does not require `
 ====
 
 [[verify-tools]]
-== Step 2: Verify the Scanning Tools
+== Step 2: Verify the tools and targets
 
 Red Hat works with several scanning partners to ensure that the published CVE feeds are available and usable to you. 
 For the purposes of this lab, the upstream versions of both `grype` and `syft` are already installed. 
@@ -131,9 +131,8 @@ No vulnerabilities found
 ====
 Hardened base images typically have **zero or near-zero CVEs** at ship time. Results may vary over time as new CVEs are discovered and reported against any component.
 ====
-The key output other than severity is status.
-This shows a high level view of what has a fix available but not applied, what is still 
-awaiting a fix, and what `grype` was told to skip.
+The two key lines in the output header are *severity*, providing a count of detected CVEs, and *status*.
+Status shows a high level view of what has a fix available but not applied, what is still awaiting a fix, and what `grype` was told to skip.
 The full status of any CVE for any hardened image can be found either on the specific image page or in https://images.redhat.com/security-feed[the full CVE feed^].
 [[scan-ubi]]
 == Step 4: Compare with the UBI Image
@@ -176,6 +175,9 @@ grype rhhi-demo:ubi --by-cve --only-fixed
 ----
 grype rhhi-demo:hardened --by-cve --only-fixed
 ----
+Notice that while the list changes, the header reported identical information.
+This is only an output filter.
+
 [TIP]
 ====
 This flag and others will filter the output for any scan. The full options and outputs for `grype` are outside the scope of this lab.

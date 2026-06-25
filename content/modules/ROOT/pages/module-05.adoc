@@ -27,9 +27,6 @@ cosign sign --tlog-upload=false \
   --yes --key cosign.key \
   registry-{guid}.{domain}/rhhi-demo@${IMAGE_DIGEST}
 ----
-
-.*Expected output:*
-[source,subs=attributes+]
 ----
 Pushing signature to: registry-{guid}.{domain}/rhhi-demo
 ----
@@ -42,8 +39,6 @@ You can see this if you list the repository tags -- the registry will show both 
 ----
 skopeo list-tags docker://registry-{guid}.{domain}/rhhi-demo
 ----
-.*Expected output:*
-[source,subs=attributes+]
 ----
 {
     "Repository": "registry-68xq6.apps.ocpvdev01.rhdp.net/rhhi-demo",
@@ -71,9 +66,6 @@ cosign verify --insecure-ignore-tlog=true \
   --key cosign.pub \
   registry-{guid}.{domain}/rhhi-demo:hardened
 ----
-
-.*Expected output:*
-[source,subs=attributes+]
 ----
 WARNING: Skipping tlog verification is an insecure practice that lacks of transparency and auditability verification for the signature.
 

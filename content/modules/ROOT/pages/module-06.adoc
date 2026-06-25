@@ -32,7 +32,7 @@ SLSA provenance for build environment information is another type of attestation
 In Module 2, you generated the SBOM at `~/rhhi-demo.spdx` using `syft`. Attaching it here as a signed attestation ties it cryptographically to the specific image digest you pushed in Module 4.
 ====
 
-Attach the SBOM using `cosign attest`. 
+Attach the SBOM using `cosign attest`, once again using the SHA digest. 
 The `--predicate` flag points to the SBOM file, and `--type spdxjson` tells cosign the format.
 
 [source,bash,role=execute,subs=attributes+]
@@ -42,8 +42,6 @@ cosign attest --tlog-upload=false \
   --predicate ~/rhhi-demo.spdx --type spdxjson \
   registry-{guid}.{domain}/rhhi-demo@${IMAGE_DIGEST}
 ----
-
-.*Expected output:*
 ----
 Using payload from: /home/rhel/rhhi-demo.spdx
 ----
@@ -55,22 +53,20 @@ The SBOM is now attached to the image in the registry and can be pulled for veri
 
 We can pull the attestations via `cosign` from the registry to inspect the package contents of the image before we pull the image.
 `cosign verify-attestation` returns the attestations as a base64 encoded envelope; pipe it through `jq` to extract the package list length.
+Let's use the *tag* to pull the attestation, like we did with the signature.
 
 [source,bash,role=execute,subs=attributes+]
 ----
 cosign verify-attestation --insecure-ignore-tlog=true \
   --key cosign.pub \
   --type spdxjson \
-  registry-{guid}.{domain}/rhhi-demo@${IMAGE_DIGEST} \
+  registry-{guid}.{domain}/rhhi-demo:hardened \
   | jq -r '.payload' | base64 -d | jq '.predicate.packages | length'
 ----
-
-.*Expected output:*
-[source,subs=attributes+]
 ----
 WARNING: Skipping tlog verification is an insecure practice that lacks of transparency and auditability verification for the signature.
 
-Verification for registry-{guid}.{domain}/rhhi-demo@sha256:... --
+Verification for registry-{guid}.{domain}/rhhi-demo:hardened --
 The following checks were performed on each of these signatures:
   - The cosign claims were validated
   - The signatures were verified against the specified public key
