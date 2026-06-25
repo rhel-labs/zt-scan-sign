@@ -112,7 +112,7 @@ jq -r '.payload' cosign.sbom | base64 -d | jq '.predicate.packages | length'
 69
 ....
 
-SBOMs are also published for Red Hat images, and can be downloaded and processed the same way.
+The SBOMs published for Red Hat images can be downloaded and processed the same way.
 [source,bash,role=execute,subs=attributes+]
 ----
 cosign download attestation --output-file redhat.sbom \

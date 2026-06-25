@@ -20,7 +20,7 @@ The registry requires no login -- it is intentionally open for this lab so you c
 
 [TIP]
 ====
-The `REGISTRY` environment variable pointing to your local registry was set during lab setup and persists in your terminal session via `~/.bashrc`. If you open a new terminal tab, run:
+The `REGISTRY` environment variable pointing to your local registry was set during lab setup and persists in your terminal session via `~/.bashrc`. If it isn't working in your session, run:
 
 [source,text]
 ----
@@ -56,7 +56,7 @@ Tags like `:v1` are mutable -- anyone could overwrite them -- so signing a tag w
 The image digest is a content-addressed SHA256 hash that is immutable.
 This digest is created by the registry when the image is pushed and can be used to uniquely identity that image for standard operations as well as signing.
 
-Let's set the captured digest as an environment variable to make our later commands a little more readable.
+Let's set the recorded digest as an environment variable to make our later commands a little more readable.
 [source,bash,role=execute]
 ----
 IMAGE_DIGEST=$(cat ~/image.digest)
@@ -84,7 +84,7 @@ For this lab we use a local key pair with an empty passphrase via the environmen
 * *Enterprise*: KMS-backed keys -- AWS KMS, Azure Key Vault, GCP KMS, HashiCorp Vault
 * *High security*: Hardware Security Modules (HSM)
 
-Never commit local keys like `cosign.key` to a git repository.
+Never commit local keys like `cosign.key` to a git repository. Always check the `cosign` documentation for https://docs.sigstore.dev/cosign/key_management/overview/[an authoritative list of keystores^].
 ====
 
 [source,bash,role=execute]

@@ -31,12 +31,11 @@ In this module, you'll use `cosign` to verify the signatures that Red Hat publis
 ====
 In the commands below you will see `--insecure-ignore-tlog`. This flag tells cosign to skip verification against the Rekor transparency log.
 
-In this lab we use local key pairs and skip the public Rekor log to avoid adding lab-generated noise to the public Sigstore instance. Production signing should *always* use the transparency log for auditability.
-
-In this lab, you will see the warning for `cosign` operations:
+You can ignore the following warning for `cosign` operations:
 
  WARNING: Skipping tlog verification is an insecure practice that lacks transparency and auditability verification for the signature.
 
+In this lab we use local key pairs and skip the public Rekor log to avoid adding lab-generated noise to the public Sigstore instance. Production signing should *always* use the transparency log for auditability.
 ====
 
 [[verify-python]]

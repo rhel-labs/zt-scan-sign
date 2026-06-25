@@ -36,8 +36,23 @@ Pushing signature to: registry-{guid}.{domain}/rhhi-demo
 
 The signature is stored as an OCI artifact in the same repository as your image. 
 Cosign appends it as a separate manifest with a `.sig` tag suffix. 
-You can see this if you list the repository tags -- the registry will show both `:v1` and a digest-tagged signature artifact.
+You can see this if you list the repository tags -- the registry will show both `:hardened` and a digest-tagged signature artifact.
 
+[source,bash,role=execute,subs=attributes+]
+----
+skopeo list-tags docker://registry-{guid}.{domain}/rhhi-demo
+----
+.*Expected output:*
+[source,subs=attributes+]
+----
+{
+    "Repository": "registry-68xq6.apps.ocpvdev01.rhdp.net/rhhi-demo",
+    "Tags": [
+        "hardened",
+        "sha256-3cadbbd0e1e98c6cf62fb783591b86997be1d1f34a8c0b30acd1f409042b6f83.sig"
+    ]
+}
+----
 When you verified the signatures of the RHHI and UBI images, the saved `.sig` files are the manifests for those specific images.
 This is where tags verus digests can be important.
 That exercise verifed by tag, which means as a tag like `latest` moves, the image SHA and signature would also be updated.
@@ -54,7 +69,7 @@ If you were using keyless signatures, the certificate chain of trust is what som
 ----
 cosign verify --insecure-ignore-tlog=true \
   --key cosign.pub \
-  registry-{guid}.{domain}/rhhi-demo@${IMAGE_DIGEST}
+  registry-{guid}.{domain}/rhhi-demo:hardened
 ----
 
 .*Expected output:*
@@ -62,7 +77,7 @@ cosign verify --insecure-ignore-tlog=true \
 ----
 WARNING: Skipping tlog verification is an insecure practice that lacks of transparency and auditability verification for the signature.
 
-Verification for registry-{guid}.{domain}/rhhi-demo@sha256:... --
+Verification for registry-{guid}.{domain}/rhhi-demo:hardened --
 The following checks were performed on each of these signatures:
   - The cosign claims were validated
   - The signatures were verified against the specified public key
@@ -73,7 +88,7 @@ Notice that the JSON output has the same format as the public signature examined
 
 [NOTE]
 ====
-We verified the image by SHA here, not tag. Both identifiers are valid and have different use cases.
+We verified the image by *tag* here, not SHA, and got the correct signature and SHA digest. Both identifiers are valid and have different use cases.
 ====
 
 == The Chain of Trust So Far

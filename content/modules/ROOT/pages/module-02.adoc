@@ -57,6 +57,13 @@ Notice that Syft identifies not just RPMs from the included rpmdb, but the appli
 
 This is another way to quickly examine a distroless image when standard tricks like `rpm -qa` aren't available.
 
+The page for a specific base image, https://images.redhat.com/?name=python&tab=sbom[the python runtime for example^], will also show an SBOM tab with a search box if you are looking for any particular package or library in a published runtime.
+There's also a link to the published SPDX, we'll talk more about that format next.
+[TIP]
+====
+Having access to vendor provided SBOMs and being able to create SBOMs for your applications are important to the verification of created images.
+====
+
 [[spdx-sbom]]
 == Step 2: Generate a Machine-Readable SPDX SBOM
 
@@ -84,7 +91,7 @@ syft rhhi-demo:hardened -o spdx-json=~/rhhi-demo.spdx
 [[inspect-sbom]]
 == Step 3: Inspect the SBOM
 
-The SBOM is a JSON file. Use `jq` to query it for the number of packages installed:
+The SPDX format is a JSON file. Use `jq` to query it for the number of packages installed:
 
 [source,bash,role=execute]
 ----
@@ -98,7 +105,7 @@ jq '.packages | length' ~/rhhi-demo.spdx
 
 [NOTE]
 ====
-The package count from `jq` may differ slightly from Syft's cataloged count because the SPDX format includes the image itself as a top-level package entry alongside its contents.
+The package count from `jq` may differ slightly from Syft's cataloged count because the SPDX format includes the image itself as a top-level package entry alongside its contents. Images are still being reviewed to remove unnecessary packages, which may also change package counts from the time of writing.
 ====
 
 You can also explore individual package entries:

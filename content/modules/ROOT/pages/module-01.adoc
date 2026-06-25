@@ -129,9 +129,12 @@ No vulnerabilities found
 
 [IMPORTANT]
 ====
-Hardened base images typically have **zero or near-zero CVEs** at ship time. Results may vary slightly over time as new CVEs are discovered against any component.
+Hardened base images typically have **zero or near-zero CVEs** at ship time. Results may vary over time as new CVEs are discovered and reported against any component.
 ====
-
+The key output other than severity is status.
+This shows a high level view of what has a fix available but not applied, what is still 
+awaiting a fix, and what `grype` was told to skip.
+The full status of any CVE for any hardened image can be found either on the specific image page or in https://images.redhat.com/security-feed[the full CVE feed^].
 [[scan-ubi]]
 == Step 4: Compare with the UBI Image
 
@@ -157,9 +160,10 @@ grype rhhi-demo:ubi --by-cve
 <output truncated>
 ----
 
-Since UBI follows RHEL, there will likely be some number of Low and Medium CVEs that haven't been addressed. 
-Depending on the scanners used, risk triage will vary and severity may not match that https://access.redhat.com/security/updates/classification[assigned by Red Hat.^]
-
+Since UBI follows RHEL, there will likely be some number of Low and Medium CVEs that haven't been addressed.
+While it is likely these may be difficult to trigger in a containerized environment, this still represents work needed to evaluate that likelihood. 
+Depending on the scanners used, risk triage will vary and severity may not match that https://access.redhat.com/security/updates/classification[assigned by Red Hat^].
+This type of cross-team toil is exactly what Red Hat Hardened Images aims to remove from the development lifecycle.
 
 The `--only-fixed` flag shows only vulnerabilities that have available patches. 
 This focuses attention on immediately actionable issues rather than those currently under investigation, deferred, or `wontfix` items. 
@@ -167,6 +171,9 @@ This focuses attention on immediately actionable issues rather than those curren
 [source,bash,role=execute]
 ----
 grype rhhi-demo:ubi --by-cve --only-fixed
+----
+[source,bash,role=execute]
+----
 grype rhhi-demo:hardened --by-cve --only-fixed
 ----
 [TIP]
