@@ -84,15 +84,15 @@ We verified the image by *tag* here, not SHA, and got the correct signature and 
 ====
 
 [[resign-mirrored]]
-== Re-sign the Mirrored Image
+== Take Custody of the Mirrored Image
 
-In Module 4 you mirrored `python:3.12` into your registry and saw that Red Hat's signature did not travel with it. That mirrored image is still unverifiable in your registry.
+In Module 4 you mirrored `python:3.12` into your registry and saw the trade-off: you kept the image and its verifiable digest, but Red Hat's signature stayed behind. That mirrored image is still unverifiable in your registry.
 
 The standard way to close this gap at a trust boundary is to sign the image with *your own* key.
 This is not a workaround for the missing vendor signature -- it is a deliberate assertion: *you* pulled this image, *you* vetted it, and *you* are admitting it into your environment on your own authority.
 From this point on, everything in your registry -- your application image and the vendor images you've mirrored -- gates on the same key you control.
 
-You recorded the mirrored image's digest in `~/python.digest`. Load it and sign by digest, exactly as you signed your own image.
+The digest you kept when you mirrored the image is exactly what you need now: cosign signs by digest. You recorded it in `~/python.digest` -- load it and sign by digest, exactly as you signed your own image.
 
 [source,bash,role=execute,subs=attributes+]
 ----
@@ -127,7 +127,7 @@ You now have:
 * An image in your local registry (`rhhi-demo:hardened`)
 * A cosign key pair (`cosign.key` / `cosign.pub`)
 * A valid signature stored in the registry alongside the image
-* A mirrored vendor image (`python:3.12`) re-signed under your own key
+* A mirrored vendor image (`python:3.12`) signed under your own key
 * The ability to verify both signatures
 
 Anyone with the public key and registry access can verify the image is authentic and hasn't been modified since signing. 
