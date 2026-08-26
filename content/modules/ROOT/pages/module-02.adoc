@@ -16,6 +16,8 @@
 
 Vulnerability scanning tells you about known CVEs today, but software supply chain compliance also requires you to understand *what* is in your images — now and in the future. A Software Bill of Materials (SBOM) is that inventory.
 
+The SBOM is how you *know the baseline you chose in Module 1*: a transparent record of exactly what you inherited and what you build on top of it. It is also the artifact you'll later attach to your own image as signed, verifiable proof of its contents (Module 6), so generating a trustworthy SBOM now sets up the chain you extend for the rest of the lab.
+
 SBOMs are essential for:
 
 * **Supply chain security** — know exactly what packages and libraries are in your images

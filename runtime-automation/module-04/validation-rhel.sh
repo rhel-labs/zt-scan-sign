@@ -21,5 +21,17 @@ if [ ! -f /home/rhel/image.digest ]; then
     exit 1
 fi
 
-echo "PASS: cosign key pair exists, image pushed to registry, digest captured" >> /tmp/progress.log
+if [ ! -f /home/rhel/python.digest ]; then
+    echo "FAIL: python.digest not found (mirrored vendor image digest)" >> /tmp/progress.log
+    echo "HINT: Mirror the vendor image with 'skopeo copy --all --digestfile ~/python.digest ...' as shown in the module" >> /tmp/progress.log
+    exit 1
+fi
+
+if ! runuser -l rhel -c "skopeo inspect --raw docker://${REGISTRY}/python:3.12" >/dev/null 2>&1; then
+    echo "FAIL: mirrored python:3.12 not found in ${REGISTRY}" >> /tmp/progress.log
+    echo "HINT: Mirror the vendor image into your local registry with skopeo copy" >> /tmp/progress.log
+    exit 1
+fi
+
+echo "PASS: cosign key pair exists, image pushed, digest captured, vendor image mirrored" >> /tmp/progress.log
 exit 0

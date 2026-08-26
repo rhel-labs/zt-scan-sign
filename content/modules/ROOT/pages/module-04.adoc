@@ -103,11 +103,57 @@ Private key written to cosign.key
 Public key written to cosign.pub
 ----
 
-The private key (`cosign.key`) is what you'll use to *sign*. 
-The public key (`cosign.pub`) is what consumers use to *verify*. 
+The private key (`cosign.key`) is what you'll use to *sign*.
+The public key (`cosign.pub`) is what consumers use to *verify*.
 Share the public key widely -- keep the private key secret.
+
+[[mirror-vendor-image]]
+== Mirror a Vendor Image to Your Registry
+
+Pushing your own image is one reason to use a local registry. Another is *mirroring* a vendor image you depend on.
+Teams do this to remove an external dependency from a build pipeline -- so a build never fails because an upstream registry is slow or unreachable -- or to serve a disconnected, air-gapped environment that has no route to the public internet at all.
+
+Let's mirror the same base image you verified in Module 3, `{rhhi-registry}/python:3.12`, into your local registry.
+Use `skopeo copy` with `--all` so the complete multi-arch image index is copied and the image keeps the *exact same digest* it had upstream.
+The `--digestfile` flag records that digest to `~/python.digest` for later use.
+
+[source,bash,role=execute,subs=attributes+]
+----
+skopeo copy --all --digestfile ~/python.digest \
+  docker://{rhhi-registry}/python:3.12 \
+  docker://registry-{guid}.{domain}/python:3.12
+----
+
+The image is now in your registry. Verify it the same way you verified the original in Module 3, using Red Hat's public key.
+
+[source,bash,role=execute,subs=attributes+]
+----
+cosign verify --insecure-ignore-tlog \
+  --key https://security.access.redhat.com/data/63405576.txt \
+  registry-{guid}.{domain}/python:3.12
+----
+
+.*Expected output:*
+----
+Error: no matching signatures:
+
+main.go:74: error during command execution: no matching signatures:
+----
+
+The image copied cleanly and kept its digest, but the signature verification *fails*.
+Nothing is wrong with the image -- it is byte-for-byte the one Red Hat published.
+
+[NOTE]
+====
+A cosign signature is not stored *inside* the image. It lives beside it in the registry as a separate artifact, tagged by the image's digest.
+`skopeo copy` moved the image and its index, but the vendor's detached signature was never part of that copy, so it did not travel.
+The mirror gave you the image while leaving the proof of its origin behind.
+====
+
+You've introduced a gap in the chain: a legitimate operation, done for good reasons, that left a mirrored image no one can verify. In the next module you'll close that gap.
 
 == Summary
 
-Your image is in the registry and you have a key pair ready. 
-In the next module, you'll sign the image and verify the signature.
+Your application image is in the registry and you have a key pair ready.
+You've also mirrored a vendor image and seen that its signature did not come along for the ride.
+In the next module, you'll sign your own image, verify it, and re-sign the mirrored image to restore a verifiable chain.
