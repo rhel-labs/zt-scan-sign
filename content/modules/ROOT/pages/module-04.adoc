@@ -117,14 +117,16 @@ Let's mirror the same base image you verified in Module 3, `{rhhi-registry}/pyth
 Use `skopeo copy` with `--all` so the complete multi-arch image index is copied and the image keeps the *exact same digest* it had upstream.
 The `--digestfile` flag records that digest to `~/python.digest` for later use.
 
+A signature isn't part of the image -- it is a separate artifact stored beside it in the registry. A registry-to-registry copy moves the image and its index, but not those separate signature artifacts. The `--remove-signatures` flag makes that explicit: this mirror carries the image, not its proof of origin.
+
 [source,bash,role=execute,subs=attributes+]
 ----
-skopeo copy --all --digestfile ~/python.digest \
+skopeo copy --all --remove-signatures --digestfile ~/python.digest \
   docker://{rhhi-registry}/python:3.12 \
   docker://registry-{guid}.{domain}/python:3.12
 ----
 
-The image is now in your registry. Verify it the same way you verified the original in Module 3, using Red Hat's public key.
+The image is now in your registry -- byte-for-byte the one Red Hat published. Run the same verification you ran in Module 3 against your mirrored copy and watch what happens.
 
 [source,bash,role=execute,subs=attributes+]
 ----
@@ -140,8 +142,8 @@ Error: no matching signatures:
 main.go:74: error during command execution: no matching signatures:
 ----
 
-The image copied cleanly and kept its digest, but the signature verification *fails*.
-Nothing is wrong with the image -- it is byte-for-byte the one Red Hat published.
+Verification *fails* -- and that is exactly what you should expect.
+Nothing is wrong with the image: it kept the vendor's exact digest, byte-for-byte. What's missing is the signature -- you mirrored the image without it, so cosign has nothing to check.
 
 [NOTE]
 ====
