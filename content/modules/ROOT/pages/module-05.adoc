@@ -92,7 +92,7 @@ The standard way to close this gap at a trust boundary is to sign the image with
 This is not a workaround for the missing vendor signature -- it is a deliberate assertion: *you* pulled this image, *you* vetted it, and *you* are admitting it into your environment on your own authority.
 From this point on, everything in your registry -- your application image and the vendor images you've mirrored -- gates on the same key you control.
 
-The digest you kept when you mirrored the image is exactly what you need now: cosign signs by digest. You recorded it in `~/python.digest` -- load it and sign by digest, exactly as you signed your own image.
+The digest you kept when you mirrored the image is exactly what you need now: cosign signs by digest, and because you preserved it, that digest *is* Red Hat's -- you are signing the vendor's genuine artifact under your own key. You recorded it in `~/python.digest` -- load it and sign by digest, exactly as you signed your own image.
 
 [source,bash,role=execute,subs=attributes+]
 ----

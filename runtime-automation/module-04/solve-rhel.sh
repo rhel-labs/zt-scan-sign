@@ -8,11 +8,10 @@ podman push --digestfile /home/rhel/image.digest ${REGISTRY}/rhhi-demo:hardened
 export COSIGN_PASSWORD=""
 cd ~
 cosign generate-key-pair
-# runuser -l has no XDG_RUNTIME_DIR, so skopeo's default authfile path is unreadable.
-# Point it at a readable empty authfile (registry is unauthenticated).
-mkdir -p /home/rhel/.config/containers
-echo '{}' > /home/rhel/.config/containers/auth.json
-export REGISTRY_AUTH_FILE=/home/rhel/.config/containers/auth.json
-skopeo copy --all --remove-signatures --digestfile /home/rhel/python.digest docker://registry.access.redhat.com/hi/python:3.12 docker://${REGISTRY}/python:3.12
+# --preserve-digests copies the manifest verbatim so the mirror keeps Red Hat's exact
+# index digest (without it skopeo re-serializes the index and the digest changes).
+# --authfile keeps skopeo off its unreadable default path under runuser -l (no
+# XDG_RUNTIME_DIR). Registry is anonymous, so a missing authfile is harmless.
+skopeo copy --all --preserve-digests --remove-signatures --authfile /home/rhel/.config/containers/auth.json --digestfile /home/rhel/python.digest docker://registry.access.redhat.com/hi/python:3.12 docker://${REGISTRY}/python:3.12
 RHEL_EOF
 echo "module-04 solve complete" >> /tmp/progress.log

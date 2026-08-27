@@ -135,30 +135,30 @@ A signature isn't part of an image -- it is a separate artifact the registry sto
 [[keep-the-digest]]
 == What the Mirror Keeps: the Digest
 
-If the signature can't come along, what can? The thing that matters most for integrity: the image's *digest*. Run the copy again, this time telling skopeo to leave the signatures behind with `--remove-signatures`. The `--digestfile` flag records the resulting digest to `~/python.digest` for later use.
+If the signature can't come along, what can? The thing that matters most for integrity: the image's *digest*. Run the copy again with two additions. `--remove-signatures` leaves the vendor's detached signatures behind so the copy can finish. `--preserve-digests` tells skopeo to copy the manifest exactly -- without it, skopeo re-serializes the image index on the way in and the mirror ends up with a *different* digest than the one Red Hat published. The `--digestfile` flag records the resulting digest to `~/python.digest` for later use.
 
 [source,bash,role=execute,subs=attributes+]
 ----
-skopeo copy --all --remove-signatures --digestfile ~/python.digest \
+skopeo copy --all --preserve-digests --remove-signatures --digestfile ~/python.digest \
   docker://{rhhi-registry}/python:3.12 \
   docker://registry-{guid}.{domain}/python:3.12
 ----
 
-This time it completes. Now prove the mirror is byte-for-byte the image Red Hat published by comparing the digest of the index in each registry.
+This time it completes. Now prove the mirror is the exact image Red Hat published by comparing the index digest each registry reports.
 
 [source,bash,role=execute,subs=attributes+]
 ----
-skopeo inspect --raw docker://{rhhi-registry}/python:3.12 | sha256sum
-skopeo inspect --raw docker://registry-{guid}.{domain}/python:3.12 | sha256sum
+skopeo inspect docker://{rhhi-registry}/python:3.12 | jq -r .Digest
+skopeo inspect docker://registry-{guid}.{domain}/python:3.12 | jq -r .Digest
 ----
 
-.*Expected output (the two hashes match):*
+.*Expected output (the two digests are identical):*
 ----
-7f3a...e21c  -
-7f3a...e21c  -
+sha256:cbcfabb29dd4604204ea2bd317f356ddb3ec3ec97e210692591ad4d97db4a1cb
+sha256:cbcfabb29dd4604204ea2bd317f356ddb3ec3ec97e210692591ad4d97db4a1cb
 ----
 
-A digest is a content-addressed SHA256 over the image index and everything it references. Identical digests mean identical content -- every layer, every byte. Change a single bit and the digest changes. Your mirror is provably the same image the vendor published, and that digest is what you'll use to sign it in the next module.
+That same digest is now recorded in `~/python.digest` -- check it with `cat ~/python.digest`. A digest is a content-addressed SHA256 over the image index and everything it references: identical digests mean identical content, every layer and every byte. Your mirror is provably the same image the vendor published, and that digest is exactly what you'll use to sign it in the next module.
 
 [[origin-is-gone]]
 == What the Mirror Loses: Proof of Origin
