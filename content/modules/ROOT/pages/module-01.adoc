@@ -22,7 +22,7 @@ Choosing a low-noise baseline means fewer vulnerabilities to triage for the life
 You'll use industry-standard tools to measure that noise for two different starting points.
 Two application images are pre-built and waiting for you:
 
-* `rhhi-demo:hardened` — a Flask web app built using Red Hat Hardened Images as the runtime base (`hi/python:3.12`), using the included `pip` to nstall the application dependecies. 
+* `rhhi-demo:hardened` — a Flask web app built using Red Hat Hardened Images as the runtime base (`hi/python:3.12`), using the included `pip` to install the application dependencies. 
 * `rhhi-demo:ubi` — the same Flask app built from the standard UBI10 base image (`ubi10/ubi`) with Python 3.12 and pip installed via dnf, a common real-world pattern for containerizing Python applications
 
 Both images run the same application code and the same version of Python 3.12. 
@@ -198,7 +198,7 @@ The CVE difference comes entirely from the base image — the hardened runtime i
 Every extra package is a potential CVE surface.
 Within the UBI family, there are additional types beyond the standard image used here that also address this sort of package reduction.
 
-Both images include the Python dependecies for Flask (`pip install flask`), so any CVEs in the application would be common.
+Both images include the Python dependencies for Flask (`pip install flask`), so any CVEs in the application would be common.
 
 [[summary]]
 == Summary

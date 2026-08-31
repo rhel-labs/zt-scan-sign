@@ -54,7 +54,7 @@ podman push --digestfile ~/image.digest registry-{guid}.{domain}/rhhi-demo:harde
 Cosign 2.0 requires digest-based references for signing. 
 Tags like `:v1` are mutable -- anyone could overwrite them -- so signing a tag would be insecure. 
 The image digest is a content-addressed SHA256 hash that is immutable.
-This digest is created by the registry when the image is pushed and can be used to uniquely identity that image for standard operations as well as signing.
+This digest is created by the registry when the image is pushed and can be used to uniquely identify that image for standard operations as well as signing.
 
 Let's set the recorded digest as an environment variable to make our later commands a little more readable.
 [source,bash,role=execute]
@@ -72,7 +72,7 @@ Image digest: sha256:abc123...
 == Generate a Cosign Key Pair
 
 Cosign uses a key pair for signing and verification of a digital signature. 
-The current recommedation is to use keyless signing, but that requires access to a certifcate authority like Fulcio to work. 
+The current recommendation is to use keyless signing, but that requires access to a certificate authority like Fulcio to work. 
 For this lab we use a local key pair with an empty passphrase via the environment variable so the commands don't prompt interactively.
 
 [TIP]

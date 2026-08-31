@@ -49,9 +49,9 @@ skopeo list-tags docker://registry-{guid}.{domain}/rhhi-demo
 }
 ----
 When you verified the signatures of the RHHI and UBI images, the saved `.sig` files are the manifests for those specific images.
-This is where tags verus digests can be important.
-That exercise verifed by tag, which means as a tag like `latest` moves, the image SHA and signature would also be updated.
-Enforcing verification on pull would allow you to prevent the introduction of a new `latest` tagged image that did not have an appropirate signature.
+This is where tags versus digests can be important.
+That exercise verified by tag, which means as a tag like `latest` moves, the image SHA and signature would also be updated.
+Enforcing verification on pull would allow you to prevent the introduction of a new `latest` tagged image that did not have an appropriate signature.
 
 [[verify-signature]]
 == Verify the Signature
