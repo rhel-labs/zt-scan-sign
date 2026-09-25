@@ -1,7 +1,7 @@
 #!/bin/sh
 echo "Validating module-05" >> /tmp/progress.log
 
-. /home/rhel/.bashrc 2>/dev/null || true
+. /etc/profile.d/lab.sh 2>/dev/null || true
 
 AUTHFILE=/home/rhel/.config/containers/auth.json
 

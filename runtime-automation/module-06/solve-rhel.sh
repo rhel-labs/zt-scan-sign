@@ -1,8 +1,8 @@
 #!/bin/sh
 echo "Solving module-06: SBOM Attestation" >> /tmp/progress.log
 
-# Load REGISTRY from bashrc
-. /home/rhel/.bashrc 2>/dev/null || true
+# Load REGISTRY (written by setup to /etc/profile.d/lab.sh via persist_env_var)
+. /etc/profile.d/lab.sh 2>/dev/null || true
 
 IMAGE_DIGEST=$(cat /home/rhel/image.digest 2>/dev/null)
 

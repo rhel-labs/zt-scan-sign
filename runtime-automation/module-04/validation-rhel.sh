@@ -1,7 +1,7 @@
 #!/bin/sh
 echo "Validating module-04" >> /tmp/progress.log
 
-. /home/rhel/.bashrc 2>/dev/null || true
+. /etc/profile.d/lab.sh 2>/dev/null || true
 
 # --authfile keeps skopeo off its unreadable default path under runuser -l (no
 # XDG_RUNTIME_DIR); the registry is anonymous so a missing file is harmless.

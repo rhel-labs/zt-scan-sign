@@ -1,8 +1,8 @@
 #!/bin/sh
 echo "Solving module-05: Image Signing and Verification" >> /tmp/progress.log
 
-# Load REGISTRY from bashrc
-. /home/rhel/.bashrc 2>/dev/null || true
+# Load REGISTRY (written by setup to /etc/profile.d/lab.sh via persist_env_var)
+. /etc/profile.d/lab.sh 2>/dev/null || true
 
 # Generate the key pair that module-05 introduces
 runuser -l rhel -c "cd ~ && COSIGN_PASSWORD='' /usr/local/bin/cosign generate-key-pair" >> /tmp/progress.log 2>&1

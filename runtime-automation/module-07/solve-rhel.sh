@@ -1,7 +1,7 @@
 #!/bin/sh
 echo "Solving module-07: Establish Supply Chain Trust" >> /tmp/progress.log
 
-. /home/rhel/.bashrc 2>/dev/null || true
+. /etc/profile.d/lab.sh 2>/dev/null || true
 
 # Download the attestation bundle Red Hat publishes for the vendor image
 runuser -l rhel -c "/usr/local/bin/cosign download attestation --output-file /home/rhel/redhat.sbom registry.access.redhat.com/hi/python:3.12" >> /tmp/progress.log 2>&1

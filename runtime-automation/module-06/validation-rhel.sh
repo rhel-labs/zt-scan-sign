@@ -1,7 +1,7 @@
 #!/bin/sh
 echo "Validating module-06" >> /tmp/progress.log
 
-. /home/rhel/.bashrc 2>/dev/null || true
+. /etc/profile.d/lab.sh 2>/dev/null || true
 
 IMAGE_DIGEST=$(cat /home/rhel/image.digest 2>/dev/null)
 if [ -z "$IMAGE_DIGEST" ]; then
