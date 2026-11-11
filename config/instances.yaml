@@ -11,11 +11,6 @@ virtualmachines:
         value: "bastions"
     networks:
       - default
-    packages:
-      - podman
-      - nano
-      - git
-      - jq
     services:
       - name: registry-http
         ports:
