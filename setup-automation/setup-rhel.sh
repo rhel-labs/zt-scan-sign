@@ -39,31 +39,31 @@ curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | \
 echo "Syft installed" >> /tmp/progress.log
 
 # Install certbot
-dnf install -y certbot
-echo "Certbot installed" >> /tmp/progress.log
+# dnf install -y certbot
+# echo "Certbot installed" >> /tmp/progress.log
 
 # Get ZeroSSL certificate for the registry hostname
-set +x
-certbot certonly \
-  --eab-kid "${ZEROSSL_EAB_KEY_ID}" \
-  --eab-hmac-key "${ZEROSSL_HMAC_KEY}" \
-  --server "https://acme.zerossl.com/v2/DV90" \
-  --standalone --preferred-challenges http \
-  -d registry-"${GUID}"."${DOMAIN}" \
-  --non-interactive --agree-tos -m trackbot@instruqt.com -v
-rm -f /var/log/letsencrypt/letsencrypt.log
-set -x
-echo "SSL cert obtained" >> /tmp/progress.log
+# set +x
+# certbot certonly \
+#   --eab-kid "${ZEROSSL_EAB_KEY_ID}" \
+#   --eab-hmac-key "${ZEROSSL_HMAC_KEY}" \
+#   --server "https://acme.zerossl.com/v2/DV90" \
+#   --standalone --preferred-challenges http \
+#   -d registry-"${GUID}"."${DOMAIN}" \
+#   --non-interactive --agree-tos -m trackbot@instruqt.com -v
+# rm -f /var/log/letsencrypt/letsencrypt.log
+# set -x
+# echo "SSL cert obtained" >> /tmp/progress.log
 
 # Start unauthenticated SSL registry
 REGISTRY_HOST="registry-${GUID}.${DOMAIN}"
 podman run -d \
   --name registry \
   -p 443:5000 \
-  -v /etc/letsencrypt/live/${REGISTRY_HOST}/fullchain.pem:/certs/fullchain.pem:ro \
-  -v /etc/letsencrypt/live/${REGISTRY_HOST}/privkey.pem:/certs/privkey.pem:ro \
-  -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/fullchain.pem \
-  -e REGISTRY_HTTP_TLS_KEY=/certs/privkey.pem \
+#   -v /etc/letsencrypt/live/${REGISTRY_HOST}/fullchain.pem:/certs/fullchain.pem:ro \
+#   -v /etc/letsencrypt/live/${REGISTRY_HOST}/privkey.pem:/certs/privkey.pem:ro \
+#   -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/fullchain.pem \
+#   -e REGISTRY_HTTP_TLS_KEY=/certs/privkey.pem \
   quay.io/mmicene/registry:2
 echo "Registry started at ${REGISTRY_HOST}" >> /tmp/progress.log
 
